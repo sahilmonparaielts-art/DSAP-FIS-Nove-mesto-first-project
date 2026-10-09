@@ -151,8 +151,13 @@
     const payload = $('xss-payload').value || $('xss-payload').placeholder;
     if (secure) {
       $('xss-preview').textContent = payload;
-      show('xss-result', 'Secured mode: the payload is shown as text; it did not run.');
-      toast('Secured mode blocked the test payload.', 'success');
+      const savedNote = localStorage.getItem('demo_note');
+      show('xss-result', savedNote === null
+        ? 'Secured mode: the payload was shown as text and did not run. Save a fictional note first to preview it safely here.'
+        : `Secured mode: payload did not run. Safe text preview of your saved note: ${savedNote}`);
+      toast(savedNote === null
+        ? 'Payload safely blocked. Save a note to see its safe preview here.'
+        : 'Payload safely blocked; saved note shown as text.');
     } else {
       $('xss-result').textContent = 'If the demonstration runs, the localStorage note will appear here.';
       $('xss-preview').innerHTML = payload;
