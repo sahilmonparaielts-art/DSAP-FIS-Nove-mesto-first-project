@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#f5f6fb">
   <title>Browser Storage Security Lab</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css', v='3') }}">
 </head>
 <body data-mode="{{ mode }}" data-csrf="{{ csrf_token }}">
   <div class="app-shell">
@@ -148,6 +148,7 @@
     </main>
     <footer class="footer"><span>Browser Storage Security Lab</span><span>Educational demo · localhost only</span></footer>
   </div>
-  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+  <div class="toast-region" id="toast-region" aria-live="polite" aria-atomic="true"></div>
+  <script src="{{ url_for('static', filename='app.js', v='3') }}" defer></script>
 </body>
 </html>
