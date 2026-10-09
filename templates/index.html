@@ -1,60 +1,153 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f6fb">
   <title>Browser Storage Security Lab</title>
-  <style>
-    body{font:16px/1.5 system-ui,sans-serif;max-width:960px;margin:2rem auto;padding:0 1rem;color:#182230;background:#f7f9fc}
-    header,.card{background:white;border:1px solid #d8e0ea;border-radius:12px;padding:1rem 1.25rem;margin:1rem 0}
-    nav a,button{display:inline-block;margin:.25rem;padding:.55rem .8rem;border-radius:7px;border:1px solid #8493a5;background:#fff;color:#17324d;cursor:pointer}
-    input,textarea{display:block;max-width:100%;width:28rem;padding:.55rem;margin:.35rem 0  .8rem;border:1px solid #9aa8b8;border-radius:6px}
-    pre{white-space:pre-wrap;background:#f0f3f7;padding:.8rem;border-radius:7px;overflow-wrap:anywhere}.warning{border-left:5px solid #bd5b16;padding:.5rem 1rem;background:#fff4e9}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1rem}
-  </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body data-mode="{{ mode }}" data-csrf="{{ csrf_token }}">
-<header>
-  <h1>Browser Storage Security Lab</h1>
-  <p>Local-only university demonstration. Use fictional information and the built-in test account.</p>
-  <nav><a href="/?mode=vulnerable">Vulnerable mode</a><a href="/?mode=secure">Secured mode</a></nav>
-  {% if mode == 'vulnerable' %}<p class="warning"><strong>Intentionally vulnerable:</strong> unsafe patterns are enabled for this local lab only.</p>{% else %}<p><strong>Secured mode:</strong> server session, escaped rendering, CSP, and CSRF token check.</p>{% endif %}
-</header>
-<section class="card">
-  <h2>Demo sign in</h2><p>Username <code>student</code>, password <code>demo-pass</code>.</p>
-  <label>Username<input id="username" placeholder="student" autocomplete="off"></label>
-  <label>Password<input id="password" placeholder="demo-pass" type="password" autocomplete="off"></label>
-  <button id="login">Sign in</button><span id="login-result">{% if username %}Signed in as {{ username }}{% else %}Not signed in{% endif %}</span>
-</section>
-<div class="grid">
- <section class="card"><h2>Browser storage</h2>
-  <label>Fictional note<textarea id="note" placeholder="Example note: project demo data"></textarea></label>
-  <button id="save-storage">Save to localStorage, sessionStorage, and IndexedDB</button>
-  <button id="render-note">Render note preview</button><div id="note-preview" class="warning">Preview appears here.</div>
-  <button id="read-storage">Read values</button><button id="clear-storage">Clear demo data</button>
-  <pre id="storage-result">No action yet.</pre>
- </section>
- <section class="card"><h2>Controlled XSS proof</h2>
-  <p>First save an ordinary fictional note in the storage panel. Then use this harmless payload to read that value and display it in this page. It sends no network request.</p>
-  <label>Test payload<textarea id="xss-payload" placeholder="&lt;img src=x onerror=&quot;document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')&quot;&gt;"></textarea></label>
-  <button id="xss-demo">Run local XSS demonstration</button><pre id="xss-result">The read result appears here.</pre>
-  <p>Payload preview:</p><pre id="xss-preview">Not run.</pre>
- </section>
-</div>
-<section class="card"><h2>WebCrypto: encrypt a sample note</h2>
-  <label>Demo passphrase<input id="passphrase" type="password" placeholder="Use a throwaway phrase"></label>
-  <button id="encrypt">Encrypt note</button><button id="decrypt">Decrypt stored note</button><pre id="crypto-result">No encrypted note yet.</pre>
-  <p>Educational only: a script executing in this page can potentially read plaintext or use the unlocked key.</p>
-</section>
-<section class="card"><h2>CSRF demonstration</h2>
-  <p>Secured mode requires sign-in and a CSRF token. Vulnerable mode intentionally accepts the action without that check.</p>
-  <button id="demo-action">Submit with page token</button>
-  <button id="demo-action-no-token">Try without a token</button><pre id="action-result">No action yet.</pre>
-</section>
-<section class="card"><h2>Interpretation</h2>
-  <ul><li>Cookies travel with matching HTTP requests; JavaScript-readable cookies are exposed to same-origin scripts.</li>
-  <li>localStorage, sessionStorage, and IndexedDB are readable by same-origin JavaScript. Avoid placing bearer session IDs or secrets there.</li>
-  <li>HttpOnly limits cookie reads from JavaScript, while CSP and safe rendering reduce injection risk. These are layered defenses.</li>
-  <li>Encryption at rest does not protect data from active code running in the unlocked application.</li></ul>
-</section>
-<script src="{{ url_for('static', filename='app.js') }}" defer></script>
-</body></html>
+  <div class="app-shell">
+    <header class="topbar">
+      <a class="brand" href="/?mode=secure" aria-label="Browser Storage Security Lab home">
+        <span class="brand-mark" aria-hidden="true">S</span>
+        <span><strong>Storage Lab</strong><small>WEB SECURITY STUDY</small></span>
+      </a>
+      <nav class="mode-switch" aria-label="Choose lab mode">
+        <a class="mode-link {% if mode == 'vulnerable' %}active-danger{% endif %}" href="/?mode=vulnerable" {% if mode == 'vulnerable' %}aria-current="page"{% endif %}>Vulnerable</a>
+        <a class="mode-link {% if mode == 'secure' %}active-secure{% endif %}" href="/?mode=secure" {% if mode == 'secure' %}aria-current="page"{% endif %}>Secured</a>
+      </nav>
+      <div class="local-badge"><span class="live-dot"></span> Local-only lab</div>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-copy">
+          <div class="eyebrow"><span class="eyebrow-line"></span> Browser storage, made safer</div>
+          <h1>See what your browser<br><span>remembers about you.</span></h1>
+          <p>Explore storage, script injection, cookies, and encryption in a controlled demo using fictional data.</p>
+          {% if mode == 'vulnerable' %}
+            <div class="mode-alert danger-alert"><span aria-hidden="true">!</span><div><strong>Vulnerable mode is active</strong><small>Unsafe patterns are enabled for this local exercise.</small></div></div>
+          {% else %}
+            <div class="mode-alert secure-alert"><span aria-hidden="true">✓</span><div><strong>Secured mode is active</strong><small>Safer rendering, CSP, and a CSRF token check are enabled.</small></div></div>
+          {% endif %}
+        </div>
+        <aside class="hero-card" aria-label="Lab safety information">
+          <div class="hero-card-icon" aria-hidden="true">⌂</div>
+          <div class="hero-card-label">SAFE TESTING SPACE</div>
+          <h2>Keep it on your machine</h2>
+          <p>This lab runs on localhost. Use the demo account and fictional notes only.</p>
+          <div class="hero-card-footer"><span class="live-dot"></span> No external data is transmitted</div>
+        </aside>
+      </section>
+
+      <section class="workspace" aria-label="Security demonstrations">
+        <div class="main-column">
+          <section class="card auth-card" aria-labelledby="auth-heading">
+            <div class="card-heading">
+              <div class="step-icon violet" aria-hidden="true">01</div>
+              <div><p class="eyebrow">SESSION BASICS</p><h2 id="auth-heading">Demo sign in</h2></div>
+              <span class="card-tag">Test account</span>
+            </div>
+            <p class="card-intro">Use the fictional credentials below to explore session behavior.</p>
+            <div class="credential-hint"><span>Username</span><code>student</code><span class="hint-divider"></span><span>Password</span><code>demo-pass</code></div>
+            <div class="form-row">
+              <label>Username<input id="username" placeholder="student" autocomplete="off"></label>
+              <label>Password<input id="password" placeholder="demo-pass" type="password" autocomplete="off"></label>
+              <button class="button button-primary" id="login">Sign in <span aria-hidden="true">→</span></button>
+            </div>
+            <p class="inline-status" id="login-result" aria-live="polite">{% if username %}Signed in as {{ username }}{% else %}Not signed in{% endif %}</p>
+          </section>
+
+          <div class="feature-grid">
+            <section class="card" aria-labelledby="storage-heading">
+              <div class="card-heading">
+                <div class="step-icon blue" aria-hidden="true">02</div>
+                <div><p class="eyebrow">PERSISTENCE</p><h2 id="storage-heading">Browser storage</h2></div>
+              </div>
+              <p class="card-intro">Save a harmless note to three browser storage options and compare what you can read.</p>
+              <label>Fictional note<textarea id="note" placeholder="Example note: project demo data"></textarea></label>
+              <div class="button-row">
+                <button class="button button-primary" id="save-storage">Save note</button>
+                <button class="button button-secondary" id="read-storage">Read values</button>
+              </div>
+              <button class="text-button" id="clear-storage">Clear demo data</button>
+              <pre class="result-box" id="storage-result" aria-live="polite">No action yet.</pre>
+            </section>
+
+            <section class="card xss-card" aria-labelledby="xss-heading">
+              <div class="card-heading">
+                <div class="step-icon coral" aria-hidden="true">03</div>
+                <div><p class="eyebrow">SCRIPT INJECTION</p><h2 id="xss-heading">Controlled XSS proof</h2></div>
+              </div>
+              <p class="card-intro">Save a fictional note first. In vulnerable mode, this harmless payload reads it and displays it here without sending a request.</p>
+              <label>Test payload<textarea class="code-field" id="xss-payload" placeholder="&lt;img src=x onerror=&quot;document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')&quot;&gt;"></textarea></label>
+              <button class="button button-secondary" id="xss-demo">Run local demonstration <span aria-hidden="true">↗</span></button>
+              <pre class="result-box xss-result" id="xss-result" aria-live="polite">The read result appears here.</pre>
+              <details class="payload-details"><summary>Payload preview</summary><pre class="result-box" id="xss-preview">Not run.</pre></details>
+            </section>
+          </div>
+
+          <div class="feature-grid lower-grid">
+            <section class="card" aria-labelledby="crypto-heading">
+              <div class="card-heading">
+                <div class="step-icon green" aria-hidden="true">04</div>
+                <div><p class="eyebrow">ENCRYPTION AT REST</p><h2 id="crypto-heading">WebCrypto</h2></div>
+              </div>
+              <p class="card-intro">Encrypt the sample note with a passphrase, then try decrypting it.</p>
+              <label>Demo passphrase<input id="passphrase" type="password" placeholder="Use a throwaway phrase" autocomplete="new-password"></label>
+              <div class="button-row">
+                <button class="button button-primary" id="encrypt">Encrypt note</button>
+                <button class="button button-secondary" id="decrypt">Decrypt</button>
+              </div>
+              <pre class="result-box" id="crypto-result" aria-live="polite">No encrypted note yet.</pre>
+              <p class="fine-print">Educational example only: active malicious code may still access plaintext or use an unlocked key.</p>
+            </section>
+
+            <section class="card" aria-labelledby="csrf-heading">
+              <div class="card-heading">
+                <div class="step-icon amber" aria-hidden="true">05</div>
+                <div><p class="eyebrow">REQUEST PROTECTION</p><h2 id="csrf-heading">CSRF check</h2></div>
+              </div>
+              <p class="card-intro">Compare a request that includes the page token with one that omits it.</p>
+              <div class="button-stack">
+                <button class="button button-primary" id="demo-action">Submit with page token</button>
+                <button class="button button-secondary" id="demo-action-no-token">Try without a token</button>
+              </div>
+              <pre class="result-box" id="action-result" aria-live="polite">No action yet.</pre>
+            </section>
+          </div>
+        </div>
+
+        <aside class="side-column">
+          <section class="side-card guide-card">
+            <div class="side-card-top"><span class="side-icon" aria-hidden="true">✳</span><span class="eyebrow">YOUR LAB GUIDE</span></div>
+            <h2>Run the study in order</h2>
+            <ol class="guide-list">
+              <li><span>1</span><div><strong>Save a sample note</strong><small>Use a fictional value you can recognize.</small></div></li>
+              <li><span>2</span><div><strong>Compare both modes</strong><small>Switch between Vulnerable and Secured.</small></div></li>
+              <li><span>3</span><div><strong>Record what changed</strong><small>Use the Results table in your report.</small></div></li>
+            </ol>
+          </section>
+          <section class="side-card findings-card">
+            <p class="eyebrow">WHAT TO NOTICE</p>
+            <ul>
+              <li><span class="finding-dot dot-blue"></span><span>Browser storage can be read by same-origin JavaScript.</span></li>
+              <li><span class="finding-dot dot-coral"></span><span>Unsafe HTML rendering can let injected script run.</span></li>
+              <li><span class="finding-dot dot-green"></span><span>HttpOnly, CSP, safe rendering, and CSRF checks add layers of protection.</span></li>
+              <li><span class="finding-dot dot-violet"></span><span>Encryption at rest does not stop active code from using an unlocked page.</span></li>
+            </ul>
+          </section>
+          <section class="safety-note">
+            <span aria-hidden="true">⚑</span>
+            <div><strong>Use fictional data only</strong><p>This intentionally vulnerable lab is for your own localhost environment. Do not deploy it publicly.</p></div>
+          </section>
+        </aside>
+      </section>
+    </main>
+    <footer class="footer"><span>Browser Storage Security Lab</span><span>Educational demo · localhost only</span></footer>
+  </div>
+  <script src="{{ url_for('static', filename='app.js') }}" defer></script>
+</body>
+</html>

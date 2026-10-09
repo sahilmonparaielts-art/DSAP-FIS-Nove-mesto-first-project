@@ -33,6 +33,7 @@ WebCrypto can protect stored ciphertext from casual inspection, but it does not 
 
 - `app.py`: Flask routes, security headers, demo session and CSRF behavior.
 - `templates/index.html`: both modes and browser-storage demonstrations.
+- `static/styles.css`: responsive local-only lab interface.
 - `static/app.js`: local storage, IndexedDB, WebCrypto, and harmless XSS proof.
 - `REPORT.md`: report draft and experiment plan.
 - `CHEAT_SHEET.md`: one-page developer guidance.
