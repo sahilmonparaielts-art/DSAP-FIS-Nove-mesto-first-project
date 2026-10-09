@@ -18,7 +18,7 @@ Demo credentials: `student` / `demo-pass`. These are public test credentials, ne
 - Choose **Secured** to see Flask's signed session cookie with `HttpOnly`, `SameSite=Lax`, and (in HTTPS deployment) `Secure`; escaped note output; and a restrictive CSP. Flask's default session is signed client-side data, not a server-side session store, so this is not a production session design. The demo's local HTTP mode leaves `Secure` off so the cookie works on localhost; set `DEMO_HTTPS=1` only when serving over HTTPS.
 - The storage panel demonstrates localStorage, sessionStorage, and IndexedDB using a fictional note. Browser storage is cleared by the **Clear demo data** button.
 - The WebCrypto panel encrypts a fictional note with AES-GCM using a key derived from a user-entered demo passphrase. This is an educational illustration, not a production key-management design.
-- Click **Run local XSS demonstration** for a controlled, harmless proof that a script in the same origin can read JavaScript-accessible storage. It only displays the result in the page; it does not transmit data.
+- Save a harmless fictional note, then click **Run local XSS demonstration** for a controlled proof that an injected script can read JavaScript-accessible storage in vulnerable mode. It only displays the result in the page; it does not transmit data. Secured mode renders the payload as text and applies CSP.
 - The CSRF section explains the cookie request behavior and provides an in-app state-changing demo with a CSRF token in secured mode.
 
 ## Safety and limitations

@@ -42,8 +42,14 @@
     show('storage-result', 'Cleared the lab values.');
   };
   $('xss-demo').onclick = () => {
-    const canRead = document.cookie.includes('demo_session=');
-    show('xss-result', {localNote:localStorage.getItem('demo_note'), sessionNote:sessionStorage.getItem('demo_note'), fakeSessionId:localStorage.getItem('demo_session_id'), readableCookieVisibleToScript:canRead, note:'No values were transmitted.'});
+    const payload = $('xss-payload').value;
+    if (secure) {
+      $('xss-preview').textContent = payload;
+      show('xss-result', 'Secured mode: the payload is shown as text; it did not run.');
+    } else {
+      $('xss-result').textContent = 'If the demonstration runs, the localStorage note will appear here.';
+      $('xss-preview').innerHTML = payload;
+    }
   };
   async function cryptoKey(passphrase, salt) {
     const material = await crypto.subtle.importKey('raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']);

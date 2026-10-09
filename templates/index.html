@@ -34,10 +34,10 @@
   <pre id="storage-result">No action yet.</pre>
  </section>
  <section class="card"><h2>Controlled XSS proof</h2>
-  <p>In vulnerable mode only, the note preview uses unsafe HTML insertion. For a harmless local proof, enter this payload as the note, save it, and render the preview:</p>
-  <code>&lt;img src=x onerror="document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')"&gt;</code>
-  <p>It displays the local note in the page and sends no network request. Secured mode renders the same input as text and blocks inline script via CSP.</p>
-  <button id="xss-demo">Run local XSS demonstration</button><pre id="xss-result">Not run.</pre>
+  <p>First save an ordinary fictional note in the storage panel. Then use this harmless payload to read that value and display it in this page. It sends no network request.</p>
+  <label>Test payload<textarea id="xss-payload">&lt;img src=x onerror="document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')"&gt;</textarea></label>
+  <button id="xss-demo">Run local XSS demonstration</button><pre id="xss-result">The read result appears here.</pre>
+  <p>Payload preview:</p><pre id="xss-preview">Not run.</pre>
  </section>
 </div>
 <section class="card"><h2>WebCrypto: encrypt a sample note</h2>
