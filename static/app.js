@@ -42,7 +42,7 @@
     show('storage-result', 'Cleared the lab values.');
   };
   $('xss-demo').onclick = () => {
-    const payload = $('xss-payload').value;
+    const payload = $('xss-payload').value || $('xss-payload').placeholder;
     if (secure) {
       $('xss-preview').textContent = payload;
       show('xss-result', 'Secured mode: the payload is shown as text; it did not run.');

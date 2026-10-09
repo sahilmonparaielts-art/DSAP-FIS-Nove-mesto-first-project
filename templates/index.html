@@ -21,13 +21,13 @@
 </header>
 <section class="card">
   <h2>Demo sign in</h2><p>Username <code>student</code>, password <code>demo-pass</code>.</p>
-  <label>Username<input id="username" value="student" autocomplete="off"></label>
-  <label>Password<input id="password" value="demo-pass" type="password" autocomplete="off"></label>
+  <label>Username<input id="username" placeholder="student" autocomplete="off"></label>
+  <label>Password<input id="password" placeholder="demo-pass" type="password" autocomplete="off"></label>
   <button id="login">Sign in</button><span id="login-result">{% if username %}Signed in as {{ username }}{% else %}Not signed in{% endif %}</span>
 </section>
 <div class="grid">
  <section class="card"><h2>Browser storage</h2>
-  <label>Fictional note<textarea id="note">Example note: project demo data</textarea></label>
+  <label>Fictional note<textarea id="note" placeholder="Example note: project demo data"></textarea></label>
   <button id="save-storage">Save to localStorage, sessionStorage, and IndexedDB</button>
   <button id="render-note">Render note preview</button><div id="note-preview" class="warning">Preview appears here.</div>
   <button id="read-storage">Read values</button><button id="clear-storage">Clear demo data</button>
@@ -35,7 +35,7 @@
  </section>
  <section class="card"><h2>Controlled XSS proof</h2>
   <p>First save an ordinary fictional note in the storage panel. Then use this harmless payload to read that value and display it in this page. It sends no network request.</p>
-  <label>Test payload<textarea id="xss-payload">&lt;img src=x onerror="document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')"&gt;</textarea></label>
+  <label>Test payload<textarea id="xss-payload" placeholder="&lt;img src=x onerror=&quot;document.getElementById('xss-result').textContent=localStorage.getItem('demo_note')&quot;&gt;"></textarea></label>
   <button id="xss-demo">Run local XSS demonstration</button><pre id="xss-result">The read result appears here.</pre>
   <p>Payload preview:</p><pre id="xss-preview">Not run.</pre>
  </section>
