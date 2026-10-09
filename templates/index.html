@@ -47,7 +47,8 @@
 </section>
 <section class="card"><h2>CSRF demonstration</h2>
   <p>Secured mode requires sign-in and a CSRF token. Vulnerable mode intentionally accepts the action without that check.</p>
-  <button id="demo-action">Submit fictional action</button><pre id="action-result">No action yet.</pre>
+  <button id="demo-action">Submit with page token</button>
+  <button id="demo-action-no-token">Try without a token</button><pre id="action-result">No action yet.</pre>
 </section>
 <section class="card"><h2>Interpretation</h2>
   <ul><li>Cookies travel with matching HTTP requests; JavaScript-readable cookies are exposed to same-origin scripts.</li>

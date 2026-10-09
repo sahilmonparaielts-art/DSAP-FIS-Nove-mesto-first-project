@@ -78,4 +78,7 @@
     const headers={}; if(secure) headers['X-CSRF-Token']=document.body.dataset.csrf;
     const r=await fetch(`/demo-action?mode=${mode}`,{method:'POST',headers}); show('action-result', await r.json());
   };
+  $('demo-action-no-token').onclick = async () => {
+    const r=await fetch(`/demo-action?mode=${mode}`,{method:'POST'}); show('action-result', await r.json());
+  };
 })();

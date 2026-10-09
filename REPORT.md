@@ -68,7 +68,7 @@ The secured mode uses Flask’s signed client-side session cookie with JavaScrip
 2. In vulnerable mode, save a fictional note, inspect the storage results, and run the provided local XSS proof. Record what the proof displays.
 3. Render the same payload in secured mode. Record that it appears as text and that CSP blocks inline execution.
 4. Compare cookie visibility from the JavaScript proof in both modes.
-5. Submit the demo action in secured mode before and after sign-in; observe whether the CSRF check allows or rejects it. Repeat in vulnerable mode and record the contrast.
+5. Submit the demo action with and without a CSRF token in both modes; record whether the server accepts or rejects each request.
 6. Encrypt a fictional note, inspect that ciphertext is stored, decrypt it with the same passphrase, and note the behavior with an incorrect passphrase.
 7. Clear browser demo data after the experiment and capture screenshots with no real personal data visible.
 

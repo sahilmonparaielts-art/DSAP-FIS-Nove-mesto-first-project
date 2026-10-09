@@ -19,7 +19,7 @@ Demo credentials: `student` / `demo-pass`. These are public test credentials, ne
 - The storage panel demonstrates localStorage, sessionStorage, and IndexedDB using a fictional note. Browser storage is cleared by the **Clear demo data** button.
 - The WebCrypto panel encrypts a fictional note with AES-GCM using a key derived from a user-entered demo passphrase. This is an educational illustration, not a production key-management design.
 - Save a harmless fictional note, then click **Run local XSS demonstration** for a controlled proof that an injected script can read JavaScript-accessible storage in vulnerable mode. It only displays the result in the page; it does not transmit data. Secured mode renders the payload as text and applies CSP.
-- The CSRF section explains the cookie request behavior and provides an in-app state-changing demo with a CSRF token in secured mode.
+- The CSRF section provides in-app buttons to submit with and without a CSRF token. In secured mode, the no-token request should be rejected; in vulnerable mode, it is intentionally accepted.
 
 ## Safety and limitations
 
