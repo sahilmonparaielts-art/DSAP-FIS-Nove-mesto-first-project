@@ -37,9 +37,23 @@
     indexedDB: await idb('readonly'), demoSession: localStorage.getItem('demo_session_id')
   });
   $('clear-storage').onclick = async () => {
-    localStorage.removeItem('demo_note'); localStorage.removeItem('demo_session_id'); sessionStorage.removeItem('demo_note');
-    const db = await dbOpen(); await new Promise((resolve) => { const tx=db.transaction('notes','readwrite'); tx.objectStore('notes').clear(); tx.oncomplete=resolve; });
-    show('storage-result', 'Cleared the lab values.');
+    const headers={}; if(secure) headers['X-CSRF-Token']=document.body.dataset.csrf;
+    const response=await fetch(`/logout?mode=${mode}`,{method:'POST',headers});
+    const result=await response.json();
+    if (!response.ok) { show('storage-result', result.message); return; }
+    localStorage.removeItem('demo_note');
+    localStorage.removeItem('demo_session_id');
+    localStorage.removeItem('encrypted_demo_note');
+    sessionStorage.removeItem('demo_note');
+    const db = await dbOpen();
+    await new Promise((resolve, reject) => {
+      const tx=db.transaction('notes','readwrite');
+      tx.objectStore('notes').clear();
+      tx.oncomplete=resolve; tx.onerror=()=>reject(tx.error);
+    });
+    document.body.dataset.csrf='';
+    $('login-result').textContent='Not signed in';
+    show('storage-result', 'Cleared demo storage and signed out.');
   };
   $('xss-demo').onclick = () => {
     const payload = $('xss-payload').value || $('xss-payload').placeholder;

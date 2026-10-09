@@ -99,6 +99,8 @@ input:focus,textarea:focus { border-color: #9288ed; background: #fff; box-shadow
 .button-primary:hover { box-shadow: 0 7px 16px #6558d33b; }
 .button-secondary { color: #515d73; border-color: #e1e5ed; background: #fff; }
 .button-secondary:hover { border-color: #c9cfe0; background: #f9faff; }
+.button-clear { color: #a4424d; border-color: #f0dadd; background: #fff8f8; }
+.button-clear:hover { border-color: #e8b9be; background: #fff1f2; }
 .inline-status { margin: 9px 0 0 50px; color: #367c68; font-size: 10px; }
 .feature-grid { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 16px; }
 .lower-grid { margin-top: 16px; }

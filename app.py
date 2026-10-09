@@ -56,6 +56,20 @@ def demo_action():
     return jsonify(ok=True, message="Fictional demo action accepted. No external data was changed.")
 
 
+@app.post("/logout")
+def logout():
+    mode = request.args.get("mode", "secure")
+    if mode != "vulnerable":
+        token = request.headers.get("X-CSRF-Token", "")
+        if not secrets.compare_digest(token, session.get("csrf_token", "")):
+            return jsonify(ok=False, message="Blocked: provide the session CSRF token."), 403
+    session.clear()
+    response = jsonify(ok=True, message="Demo session cleared.")
+    response.delete_cookie("demo_session", path="/", secure=HTTPS_MODE,
+                           httponly=(mode != "vulnerable"), samesite="Lax")
+    return response
+
+
 @app.get("/health")
 def health():
     return jsonify(status="ok", app="browser-storage-security-demo")
